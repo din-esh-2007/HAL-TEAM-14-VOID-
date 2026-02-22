@@ -7,9 +7,11 @@ import os
 # Use environment variable for database URL (PostgreSQL on Render, or fallback to SQLite)
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./enterprise_secure.db")
 
-# Fix for Render's PostgreSQL URL which starts with postgres:// but SQLAlchemy requires postgresql://
-if DATABASE_URL.startswith("postgres://"):
+# Fix for Render's PostgreSQL URL: postgres:// -> postgresql://
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+print(f"📡 Connecting to database: {DATABASE_URL.split('@')[-1] if '@' in DATABASE_URL else DATABASE_URL}")
 
 engine = create_engine(
     DATABASE_URL,

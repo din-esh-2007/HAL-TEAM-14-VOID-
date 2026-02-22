@@ -27,7 +27,18 @@ from app.auth import create_access_token, get_current_user, verify_password, get
 from app.email_utils import send_login_success_email, send_failed_login_email
 
 app = FastAPI(title="HAL 4.0 — Secure Search Intelligence")
-init_db()
+
+# Better startup logging for Render
+@app.on_event("startup")
+def startup_event():
+    print("🚀 Starting HAL 4.0 Secure Platform...")
+    try:
+        init_db()
+        print("✅ Database initialized successfully.")
+    except Exception as e:
+        print(f"❌ CRITICAL ERROR during database initialization: {e}")
+        # Don't raise here, let the app try to start, 
+        # but the log will tell us exactly what went wrong.
 
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True,
                    allow_methods=["*"], allow_headers=["*"])
